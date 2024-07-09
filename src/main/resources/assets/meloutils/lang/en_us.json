@@ -1,0 +1,5 @@
+{
+  "meloutils.settings.category.utils": "Utils",
+  "meloutils.settings.keepChat": "Keep chat",
+  "meloutils.settings.keepChat.description": "Keeps chat even if switched server or disconnected. You can still clear chat with F3+D."
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "meloutils",
+  "version": "${version}",
+  "name": "MeloUtils",
+  "description": "A collection of features that MelonRind (main dev) wants.",
+  "authors": [
+    "MelonRind"
+  ],
+  "contact": {
+    "repo": "https://github.com/aMelonRind/MeloUtils"
+  },
+  "license": "MIT",
+  "icon": "assets/meloutils/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "io.github.amelonrind.meloutils.MeloUtils"
+    ],
+    "modmenu": [
+      "io.github.amelonrind.meloutils.config.ModMenuApiImpl"
+    ]
+  },
+  "mixins": [
+    "meloutils.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
