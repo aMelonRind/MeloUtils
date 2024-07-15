@@ -3,14 +3,15 @@ package io.github.amelonrind.meloutils.config;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl3.api.*;
+import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import io.github.amelonrind.meloutils.MeloUtils;
 import io.github.amelonrind.meloutils.feature.KeepChat;
 import net.minecraft.text.MutableText;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -37,20 +38,9 @@ public class ModMenuApiImpl implements ModMenuApi {
                 .build();
     }
 
-    private static Option<Boolean> optionOf(String name, int imageW, int imageH, Supplier<Boolean> getter, Consumer<Boolean> setter) {
-        return Option.<Boolean>createBuilder()
-                .name(translatable(name))
-                .description(OptionDescription.createBuilder()
-                        .text(translatable(name + ".description"))
-                        .image(Identifier.of("meloutils:description_images/" + name.toLowerCase() + ".png"), imageW, imageH)
-                        .build())
-                .binding(true, getter, setter)
-                .controller(TickBoxControllerBuilder::create)
-                .build();
-    }
-
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        Config def = new Config();
         return p -> {
             Config cfg = Config.get();
             return YetAnotherConfigLib.createBuilder()
@@ -61,6 +51,13 @@ public class ModMenuApiImpl implements ModMenuApi {
                                 KeepChat.isClearingChatWithF3D = false;
                                 cfg.keepChat = val;
                             }))
+                            .option(optionOf("glowItem", () -> cfg.glowItem, val -> cfg.glowItem = val))
+                            .option(Option.<Color>createBuilder()
+                                    .name(translatable("glowItemColor"))
+                                    .description(descriptionOf("glowItemColor"))
+                                    .binding(def.glowItemColor, () -> cfg.glowItemColor, val -> cfg.glowItemColor = val)
+                                    .controller(ColorControllerBuilder::create)
+                                    .build())
                             .build())
                     .save(Config.HANDLER::save)
                     .build()

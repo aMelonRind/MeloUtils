@@ -7,6 +7,8 @@ import io.github.amelonrind.meloutils.MeloUtils;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 
+import java.awt.*;
+
 public class Config {
     public static final ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
             .id(Identifier.of(MeloUtils.MOD_ID, "main"))
@@ -22,5 +24,11 @@ public class Config {
 
     @SerialEntry(comment = "Keeps chat even if switched server or disconnected. You can still clear chat with F3+D.")
     public boolean keepChat = true;
+
+    @SerialEntry(comment = "Glow dropped items.")
+    public boolean glowItem = true;
+
+    @SerialEntry(comment = "The color of glowing item.")
+    public Color glowItemColor = new Color(0xFF8C00);
 
 }
