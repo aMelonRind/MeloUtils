@@ -11,7 +11,8 @@
     "MixinDecoderHandler",
     "MixinEntity",
     "MixinKeyboard",
-    "MixinPacketCodecDispatcher"
+    "MixinPacketCodecDispatcher",
+    "MixinShulkerBoxBlockEntity"
   ],
   "injectors": {
     "defaultRequire": 1
