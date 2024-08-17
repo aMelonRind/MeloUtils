@@ -37,10 +37,12 @@ public class MeloUtils implements ClientModInitializer {
         return Text.translatable(MOD_ID + "." + key, args);
     }
 
+    @SuppressWarnings("unused")
     public static void logTranslatableChat(String key) {
         logChat(translatable(key));
     }
 
+    @SuppressWarnings("unused")
     public static void logTranslatableChat(String key, Object ...args) {
         logChat(translatable(key, args));
     }

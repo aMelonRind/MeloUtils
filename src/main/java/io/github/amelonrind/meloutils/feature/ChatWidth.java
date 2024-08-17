@@ -1,6 +1,5 @@
 package io.github.amelonrind.meloutils.feature;
 
-import io.github.amelonrind.meloutils.MeloUtils;
 import io.github.amelonrind.meloutils.config.Config;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
