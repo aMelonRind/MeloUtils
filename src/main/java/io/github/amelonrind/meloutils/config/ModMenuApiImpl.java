@@ -5,6 +5,7 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import io.github.amelonrind.meloutils.MeloUtils;
 import io.github.amelonrind.meloutils.feature.KeepChat;
@@ -70,6 +71,38 @@ public class ModMenuApiImpl implements ModMenuApi {
                                             .formatValue(v -> Text.literal(String.format("x%.2f", v))))
                                     .build())
                             .option(optionOf("chatWidthFlex", () -> cfg.chatWidthFlex, val -> cfg.chatWidthFlex = val))
+                            .option(Option.<Integer>createBuilder()
+                                    .name(translatable("breakCooldown"))
+                                    .description(descriptionOf("breakCooldown"))
+                                    .binding(def.breakCooldown, () -> cfg.breakCooldown, val -> cfg.breakCooldown = val)
+                                    .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                            .range(0, def.breakCooldown)
+                                            .step(1))
+                                    .build())
+                            .option(Option.<Integer>createBuilder()
+                                    .name(translatable("sneakBreakCooldown"))
+                                    .description(descriptionOf("sneakBreakCooldown"))
+                                    .binding(def.sneakBreakCooldown, () -> cfg.sneakBreakCooldown, val -> cfg.sneakBreakCooldown = val)
+                                    .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                            .range(0, def.sneakBreakCooldown)
+                                            .step(1))
+                                    .build())
+                            .option(Option.<Integer>createBuilder()
+                                    .name(translatable("interactCooldown"))
+                                    .description(descriptionOf("interactCooldown"))
+                                    .binding(def.interactCooldown, () -> cfg.interactCooldown, val -> cfg.interactCooldown = val)
+                                    .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                            .range(0, def.interactCooldown)
+                                            .step(1))
+                                    .build())
+                            .option(Option.<Integer>createBuilder()
+                                    .name(translatable("jumpCooldown"))
+                                    .description(descriptionOf("jumpCooldown"))
+                                    .binding(def.jumpCooldown, () -> cfg.jumpCooldown, val -> cfg.jumpCooldown = val)
+                                    .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                            .range(0, def.jumpCooldown)
+                                            .step(1))
+                                    .build())
                             .build())
                     .save(Config.HANDLER::save)
                     .build()

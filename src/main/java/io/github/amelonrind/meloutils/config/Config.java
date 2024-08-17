@@ -37,6 +37,18 @@ public class Config {
     @SerialEntry(comment = "If true, expand chat width only when needed.")
     public boolean chatWidthFlex = true;
 
+    @SerialEntry(comment = "Break cooldown override.")
+    public int breakCooldown = 5;
+
+    @SerialEntry(comment = "Break cooldown override while sneaking.")
+    public int sneakBreakCooldown = 5;
+
+    @SerialEntry(comment = "Interact cooldown override.")
+    public int interactCooldown = 4;
+
+    @SerialEntry(comment = "Jump cooldown override.")
+    public int jumpCooldown = 10;
+
     public void fixValues() {
         if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;
     }

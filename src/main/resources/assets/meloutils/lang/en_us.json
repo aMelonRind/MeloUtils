@@ -9,5 +9,13 @@
   "meloutils.settings.chatWidthMultiplier": "Focused Chat Width Multiplier",
   "meloutils.settings.chatWidthMultiplier.description": "The multiplier of focused chat width.",
   "meloutils.settings.chatWidthFlex": "Focused Chat Width Flex",
-  "meloutils.settings.chatWidthFlex.description": "If true, expand chat width only when needed."
+  "meloutils.settings.chatWidthFlex.description": "If true, expand chat width only when needed.",
+  "meloutils.settings.breakCooldown": "Break Cooldown",
+  "meloutils.settings.breakCooldown.description": "Break cooldown override.",
+  "meloutils.settings.sneakBreakCooldown": "Sneak Break Cooldown",
+  "meloutils.settings.sneakBreakCooldown.description": "Break cooldown override while sneaking.",
+  "meloutils.settings.interactCooldown": "Interact Cooldown",
+  "meloutils.settings.interactCooldown.description": "Interact cooldown override.",
+  "meloutils.settings.jumpCooldown": "Jump Cooldown",
+  "meloutils.settings.jumpCooldown.description": "Jump cooldown override."
 }
