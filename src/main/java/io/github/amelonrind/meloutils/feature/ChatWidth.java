@@ -1,5 +1,6 @@
 package io.github.amelonrind.meloutils.feature;
 
+import io.github.amelonrind.meloutils.MeloUtils;
 import io.github.amelonrind.meloutils.config.Config;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -25,7 +26,7 @@ public class ChatWidth {
             return;
         }
 
-        int width2 = (int) Math.ceil(width * mul);
+        int width2 = Math.max(40, Math.min((int) Math.ceil(width * mul), mc.getWindow().getScaledWidth() - 20));
 
         if (Config.get().chatWidthFlex) {
             if (shouldUpdateFlexWidth) {
