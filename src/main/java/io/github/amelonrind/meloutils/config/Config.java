@@ -31,4 +31,14 @@ public class Config {
     @SerialEntry(comment = "The color of glowing item.")
     public Color glowItemColor = new Color(0xFF8C00);
 
+    @SerialEntry(comment = "The width multiplier on focused chat.")
+    public float chatWidthMultiplier = 2.0f;
+
+    @SerialEntry(comment = "If true, expand chat width only when needed.")
+    public boolean chatWidthFlex = true;
+
+    public void fixValues() {
+        if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;
+    }
+
 }

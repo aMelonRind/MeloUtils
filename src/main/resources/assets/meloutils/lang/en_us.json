@@ -5,5 +5,9 @@
   "meloutils.settings.glowItem": "Glow Item",
   "meloutils.settings.glowItem.description": "Glow dropped items.",
   "meloutils.settings.glowItemColor": "Glow Item Color",
-  "meloutils.settings.glowItemColor.description": "The color of glowing item."
+  "meloutils.settings.glowItemColor.description": "The color of glowing item.",
+  "meloutils.settings.chatWidthMultiplier": "Focused Chat Width Multiplier",
+  "meloutils.settings.chatWidthMultiplier.description": "The multiplier of focused chat width.",
+  "meloutils.settings.chatWidthFlex": "Focused Chat Width Flex",
+  "meloutils.settings.chatWidthFlex.description": "If true, expand chat width only when needed."
 }

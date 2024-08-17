@@ -4,10 +4,12 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import io.github.amelonrind.meloutils.MeloUtils;
 import io.github.amelonrind.meloutils.feature.KeepChat;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,6 +60,16 @@ public class ModMenuApiImpl implements ModMenuApi {
                                     .binding(def.glowItemColor, () -> cfg.glowItemColor, val -> cfg.glowItemColor = val)
                                     .controller(ColorControllerBuilder::create)
                                     .build())
+                            .option(Option.<Float>createBuilder()
+                                    .name(translatable("chatWidthMultiplier"))
+                                    .description(descriptionOf("chatWidthMultiplier"))
+                                    .binding(def.chatWidthMultiplier, () -> cfg.chatWidthMultiplier, val -> cfg.chatWidthMultiplier = val)
+                                    .controller(opt -> FloatSliderControllerBuilder.create(opt)
+                                            .range(1.0f, 4.0f)
+                                            .step(0.05f)
+                                            .formatValue(v -> Text.literal(String.format("x%.2f", v))))
+                                    .build())
+                            .option(optionOf("chatWidthFlex", () -> cfg.chatWidthFlex, val -> cfg.chatWidthFlex = val))
                             .build())
                     .save(Config.HANDLER::save)
                     .build()

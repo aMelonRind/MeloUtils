@@ -25,6 +25,7 @@ public class MeloUtils implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Config.HANDLER.load();
+        Config.get().fixValues();
     }
 
     @Contract(value = "_ -> new", pure = true)
