@@ -49,7 +49,7 @@ public class RevealEnchantment {
     private static final List<PowerInfo> powerInfos = new ArrayList<>();
     @SuppressWarnings("unchecked")
     private static final List<Text>[] texts = new List[]{ new ArrayList<>(), new ArrayList<>(), new ArrayList<>() };
-    public static List<RegistryKey<Enchantment>> list1204 = List.of(
+    private static final List<RegistryKey<Enchantment>> list1204 = List.of(
             PROTECTION, FIRE_PROTECTION, FEATHER_FALLING, BLAST_PROTECTION, PROJECTILE_PROTECTION, RESPIRATION,
             AQUA_AFFINITY, THORNS, DEPTH_STRIDER, SHARPNESS, SMITE, BANE_OF_ARTHROPODS, KNOCKBACK, FIRE_ASPECT,
             LOOTING, SWEEPING_EDGE, EFFICIENCY, SILK_TOUCH, UNBREAKING, FORTUNE, POWER, PUNCH, FLAME, INFINITY,
