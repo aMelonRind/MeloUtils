@@ -49,6 +49,9 @@ public class Config {
     @SerialEntry(comment = "Jump cooldown override.")
     public int jumpCooldown = 10;
 
+    @SerialEntry(comment = "Reveal enchantment in the enchanting table.")
+    public boolean revealEnchantment = true;
+
     public void fixValues() {
         if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;
     }

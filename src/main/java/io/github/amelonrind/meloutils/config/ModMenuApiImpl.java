@@ -103,6 +103,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                                             .range(0, def.jumpCooldown)
                                             .step(1))
                                     .build())
+                            .option(optionOf("revealEnchantment", () -> cfg.revealEnchantment, val -> cfg.revealEnchantment = val))
                             .build())
                     .save(Config.HANDLER::save)
                     .build()

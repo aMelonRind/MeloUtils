@@ -17,5 +17,13 @@
   "meloutils.settings.interactCooldown": "Interact Cooldown",
   "meloutils.settings.interactCooldown.description": "Interact cooldown override.",
   "meloutils.settings.jumpCooldown": "Jump Cooldown",
-  "meloutils.settings.jumpCooldown.description": "Jump cooldown override."
+  "meloutils.settings.jumpCooldown.description": "Jump cooldown override.",
+  "meloutils.settings.revealEnchantment": "Reveal Enchantment",
+  "meloutils.settings.revealEnchantment.description": "Reveal enchantment in the enchanting table.",
+
+  "meloutils.revealEnchantment.noShelf": "⚠ Cannot count shelves",
+  "meloutils.revealEnchantment.irregularData": "⚠ Reset due to irregular data",
+  "meloutils.revealEnchantment.collectedInfo": "collected %d/%d info",
+  "meloutils.revealEnchantment.crackProgress": "reduced to %d seeds",
+  "meloutils.revealEnchantment.seed": "Seed: %d"
 }
