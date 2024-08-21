@@ -23,7 +23,7 @@
 
   "meloutils.revealEnchantment.noShelf": "⚠ Cannot count shelves",
   "meloutils.revealEnchantment.irregularData": "⚠ Reset due to irregular data",
-  "meloutils.revealEnchantment.collectedInfo": "collected %d/%d info",
   "meloutils.revealEnchantment.crackProgress": "reduced to %d seeds",
-  "meloutils.revealEnchantment.seed": "Seed: %d"
+  "meloutils.revealEnchantment.seed": "Seed: %d",
+  "meloutils.revealEnchantment.allPower.info": "slot %d %dL %d shelves:"
 }

@@ -21,7 +21,7 @@ public class MixinEnchantmentScreen {
 
     @Inject(method = "render", at = @At(value = "INVOKE", ordinal = 0, shift = At.Shift.AFTER, target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
     private void onTooltip(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, @Local List<Text> list, @Local(ordinal = 3) int index) {
-        RevealEnchantment.appendText(list, index, ((EnchantmentScreen) (Object) this).getScreenHandler());
+        RevealEnchantment.appendText(list, index, ((EnchantmentScreen) (Object) this).getScreenHandler(), context);
     }
 
     @Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/EnchantingPhrases;generatePhrase(Lnet/minecraft/client/font/TextRenderer;I)Lnet/minecraft/text/StringVisitable;"))

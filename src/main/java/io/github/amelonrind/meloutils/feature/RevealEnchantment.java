@@ -3,6 +3,8 @@ package io.github.amelonrind.meloutils.feature;
 import io.github.amelonrind.meloutils.config.Config;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -28,10 +30,12 @@ import net.minecraft.util.math.random.CheckedRandom.Splitter;
 import net.minecraft.util.math.random.GaussianGenerator;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.math.random.RandomSplitter;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -39,6 +43,12 @@ import static io.github.amelonrind.meloutils.MeloUtils.mc;
 import static net.minecraft.enchantment.Enchantments.*;
 
 public class RevealEnchantment {
+    public static List<RegistryKey<Enchantment>> LIST1204 = List.of(
+            PROTECTION, FIRE_PROTECTION, FEATHER_FALLING, BLAST_PROTECTION, PROJECTILE_PROTECTION, RESPIRATION,
+            AQUA_AFFINITY, THORNS, DEPTH_STRIDER, SHARPNESS, SMITE, BANE_OF_ARTHROPODS, KNOCKBACK, FIRE_ASPECT,
+            LOOTING, SWEEPING_EDGE, EFFICIENCY, SILK_TOUCH, UNBREAKING, FORTUNE, POWER, PUNCH, FLAME, INFINITY,
+            LUCK_OF_THE_SEA, LURE, LOYALTY, IMPALING, RIPTIDE, CHANNELING, MULTISHOT, QUICK_CHARGE, PIERCING
+    );
     private static WeakReference<EnchantmentScreenHandler> lastHandler = new WeakReference<>(null);
     private static ItemStack lastStack = ItemStack.EMPTY;
     private static int seedRight = 0;
@@ -49,12 +59,7 @@ public class RevealEnchantment {
     private static final List<PowerInfo> powerInfos = new ArrayList<>();
     @SuppressWarnings("unchecked")
     private static final List<Text>[] texts = new List[]{ new ArrayList<>(), new ArrayList<>(), new ArrayList<>() };
-    private static final List<RegistryKey<Enchantment>> list1204 = List.of(
-            PROTECTION, FIRE_PROTECTION, FEATHER_FALLING, BLAST_PROTECTION, PROJECTILE_PROTECTION, RESPIRATION,
-            AQUA_AFFINITY, THORNS, DEPTH_STRIDER, SHARPNESS, SMITE, BANE_OF_ARTHROPODS, KNOCKBACK, FIRE_ASPECT,
-            LOOTING, SWEEPING_EDGE, EFFICIENCY, SILK_TOUCH, UNBREAKING, FORTUNE, POWER, PUNCH, FLAME, INFINITY,
-            LUCK_OF_THE_SEA, LURE, LOYALTY, IMPALING, RIPTIDE, CHANNELING, MULTISHOT, QUICK_CHARGE, PIERCING
-    );
+    private static final WeakHashMap<EnchantmentScreenHandler, List<List<Text>>> allPowerPredictions = new WeakHashMap<>();
 
     public static StringVisitable getPhrase(EnchantmentScreenHandler handler, int index) {
         assert mc.world != null;
@@ -64,17 +69,20 @@ public class RevealEnchantment {
                 .orElseGet(Text::empty);
     }
 
-    public static void appendText(List<Text> list, int index, EnchantmentScreenHandler handler) {
+    public static void appendText(List<Text> list, int index, EnchantmentScreenHandler handler, DrawContext context) {
         if (!Config.get().revealEnchantment) return;
-        update(handler);
+        ItemStack stack = handler.getSlot(0).getStack();
+        update(handler, stack);
         list.addAll(texts[index]);
+
+        renderAllPowerPredictions(handler, stack, context);
     }
 
-    private static void update(EnchantmentScreenHandler handler) {
-        ItemStack stack = handler.getSlot(0).getStack();
+    private static void update(EnchantmentScreenHandler handler, ItemStack stack) {
         boolean unchanged = true;
         if (!ItemStack.areEqual(lastStack, stack)) {
             lastStack = stack.copy();
+            allPowerPredictions.clear();
             unchanged = false;
         }
         if (lastHandler.get() != handler) {
@@ -107,36 +115,27 @@ public class RevealEnchantment {
         }
 
         boolean hasIrregularData = crackSeed(shelves);
+        boolean doMulti = false;
         if (!seedFound) {
             if (hasIrregularData) {
                 appendHeader(Text.translatable("meloutils.revealEnchantment.irregularData").formatted(Formatting.DARK_GRAY));
-            } else if (reducedSeeds.length > 0) {
-                appendHeader(Text.translatable("meloutils.revealEnchantment.crackProgress", reducedSeeds.length).formatted(Formatting.DARK_GRAY));
-            } else {
-                appendHeader(Text.translatable("meloutils.revealEnchantment.collectedInfo", powerInfos.size(), 3).formatted(Formatting.DARK_GRAY));
             }
-            return;
-        } else {
-            appendHeader(Text.translatable("meloutils.revealEnchantment.seed", seed).formatted(Formatting.DARK_GRAY));
+            if (reducedSeeds.length > 0) {
+                appendHeader(Text.translatable("meloutils.revealEnchantment.crackProgress", reducedSeeds.length).formatted(Formatting.DARK_GRAY));
+                if (reducedSeeds.length < 5) doMulti = true;
+            }
+            if (!doMulti) return;
         }
 
-//        MeloUtils.logChat(Text.literal(String.format("[Debug] Generating enchantment with seed %d and power [%d, %d, %d] on item %s", seed, powers[0], powers[1], powers[2], stack.getName().getString())));
-
-        Registry<Enchantment> registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
-        Supplier<Stream<RegistryEntry<Enchantment>>> streamSupplier = getEnchantmentList(registry);
-
+        Supplier<Stream<RegistryEntry<Enchantment>>> streamSupplier = getEnchantmentList(world);
         Random random = new FastRandom();
-        for (int i = 0; i < 3; i++) {
-            List<Text> t = texts[i];
-            if (powers[i] <= 0) continue;
-            List<EnchantmentLevelEntry> list = generateEnchantments(streamSupplier.get(), stack, i, powers[i], random);
-            if (list != null && !list.isEmpty()) {
-//                EnchantmentLevelEntry entry = list.get(random.nextInt(list.size()));
-                t.add(ScreenTexts.EMPTY);
-                for (EnchantmentLevelEntry entry : list) {
-                    t.add(Enchantment.getName(entry.enchantment, entry.level));
-                }
+        Text seedHeader = Text.translatable("meloutils.revealEnchantment.seed", seed).formatted(Formatting.DARK_GRAY);
+        if (doMulti) {
+            for (int seed : reducedSeeds) {
+                appendEnchantmentPrediction(stack, random, seed, seedHeader, streamSupplier);
             }
+        } else {
+            appendEnchantmentPrediction(stack, random, seed, seedHeader, streamSupplier);
         }
     }
 
@@ -144,7 +143,108 @@ public class RevealEnchantment {
         for (List<Text> list : texts) list.add(text);
     }
 
-    private static Supplier<Stream<RegistryEntry<Enchantment>>> getEnchantmentList(Registry<Enchantment> registry) {
+    private static void appendEnchantmentPrediction(ItemStack stack, Random random, int seed, Text seedHeader, Supplier<Stream<RegistryEntry<Enchantment>>> streamSupplier) {
+        Text asterisk = Text.literal(" *").formatted(Formatting.GOLD);
+        for (int i = 0; i < 3; i++) {
+            List<Text> t = texts[i];
+            if (powers[i] <= 0) continue;
+            List<EnchantmentLevelEntry> list = generateEnchantments(streamSupplier.get(), stack, i, powers[i], random, seed);
+            if (list.isEmpty()) continue;
+
+            EnchantmentLevelEntry e = list.size() == 1 ? null : list.get(random.nextInt(list.size()));
+            t.add(ScreenTexts.EMPTY);
+            t.add(seedHeader);
+            for (EnchantmentLevelEntry entry : list) {
+                Text name = Enchantment.getName(entry.enchantment, entry.level);
+                t.add(entry == e ? Text.empty().append(name).append(asterisk) : name);
+            }
+        }
+    }
+
+    private static void renderAllPowerPredictions(EnchantmentScreenHandler handler, ItemStack stack, DrawContext context) {
+        assert mc.world != null;
+        if (!Screen.hasAltDown()) return;
+        if (!seedFound) return;
+        // since the seed wouldn't be found if the item is invalid, we skip the checks here
+
+        List<List<Text>> listOfTexts = allPowerPredictions.get(handler);
+        if (listOfTexts == null) {
+            listOfTexts = new ArrayList<>();
+            allPowerPredictions.put(handler, listOfTexts);
+
+            // iterate through possible shelves and slots to generate contexts
+            long raw = FastRandom.getRawSeed(seed);
+            FastRandom random = new FastRandom();
+            Set<EnchantingContext> contexts = new HashSet<>();
+            for (int shelves = 15; shelves >= 0; shelves--) {
+                random.setRawSeed(raw);
+                for (int i = 0; i < 3; i++) {
+                    int power = PowerInfo.getPower(random, i, shelves);
+                    if (power > 0) {
+                        contexts.add(new EnchantingContext(i, power, shelves));
+                    }
+                }
+            }
+
+            // generate enchantments
+            Supplier<Stream<RegistryEntry<Enchantment>>> streamSupplier = getEnchantmentList(mc.world);
+            Map<Set<ELEWrapper>, Set<EnchantingContext>> map = new HashMap<>();
+            for (EnchantingContext ctx : contexts) {
+                List<EnchantmentLevelEntry> list = ctx.generate(streamSupplier.get(), stack, random, seed);
+                if (list.isEmpty()) continue;
+                map.computeIfAbsent(
+                        list.stream().map(ELEWrapper::new).collect(Collectors.toUnmodifiableSet()),
+                        key -> new HashSet<>()
+                ).add(ctx);
+            }
+
+            int maxRows = context.getScaledWindowHeight() / 10 - 2;
+            List<Text> texts = new ArrayList<>();
+            texts.add(Text.translatable("meloutils.revealEnchantment.seed", seed).formatted(Formatting.AQUA));
+            texts.add(ScreenTexts.EMPTY);
+            Text indent = Text.literal("  ");
+            for (Map.Entry<Set<ELEWrapper>, Set<EnchantingContext>> ent : map.entrySet().stream().sorted(Comparator
+                        .<Map.Entry<Set<ELEWrapper>, Set<EnchantingContext>>>comparingInt(e -> e.getKey().size())
+                        .thenComparingInt(e -> e.getKey().stream().mapToInt(w -> w.base().level).sum()).reversed()
+                    ).toList()
+            ) {
+                Set<EnchantingContext> filtered = ent.getValue();
+
+                // remove bad enchanting contexts
+                for (EnchantingContext ctx : Set.copyOf(filtered)) {
+                    if (filtered.stream().anyMatch(ctx::defWorseThan)) {
+                        filtered.remove(ctx);
+                    }
+                }
+
+                if (texts.size() + filtered.size() + ent.getKey().size() > maxRows) {
+                    listOfTexts.add(texts);
+                    texts = new ArrayList<>();
+                }
+
+                for (EnchantingContext ctx : new TreeSet<>(filtered)) {
+                    texts.add(ctx.toTranslated());
+                }
+                for (ELEWrapper entry : ent.getKey()) {
+                    texts.add(Text.empty().append(indent).append(entry.toTranslated()));
+                }
+            }
+            if (!texts.isEmpty()) listOfTexts.add(texts);
+        }
+
+        if (!listOfTexts.isEmpty()) {
+            int maxWidth = context.getScaledWindowWidth() - 9;
+            int x = -9;
+            for (List<Text> texts : listOfTexts) {
+                context.drawTooltip(mc.textRenderer, texts, x, 15);
+                x += texts.stream().mapToInt(mc.textRenderer::getWidth).max().orElse(0) + 7;
+                if (x > maxWidth) break;
+            }
+        }
+    }
+
+    private static Supplier<Stream<RegistryEntry<Enchantment>>> getEnchantmentList(ClientWorld world) {
+        Registry<Enchantment> registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
         Optional<RegistryEntryList.Named<Enchantment>> opt = registry.getEntryList(EnchantmentTags.IN_ENCHANTING_TABLE);
         if (opt.isPresent()) {
             RegistryEntryList.Named<Enchantment> named = opt.get();
@@ -152,7 +252,7 @@ public class RevealEnchantment {
                 return named::stream;
             }
         }
-        List<RegistryEntry<Enchantment>> list = list1204.stream()
+        List<RegistryEntry<Enchantment>> list = LIST1204.stream()
                 .map(registry::getEntry)
                 .filter(Optional::isPresent)
                 .map(optional -> (RegistryEntry<Enchantment>) optional.get())
@@ -160,7 +260,7 @@ public class RevealEnchantment {
         return list::stream;
     }
 
-    private static List<EnchantmentLevelEntry> generateEnchantments(Stream<RegistryEntry<Enchantment>> entryList, ItemStack stack, int slot, int level, Random random) {
+    private static List<EnchantmentLevelEntry> generateEnchantments(Stream<RegistryEntry<Enchantment>> entryList, ItemStack stack, int slot, int level, Random random, int seed) {
         random.setSeed(seed + slot);
 
         List<EnchantmentLevelEntry> list = EnchantmentHelper.generateEnchantments(random, stack, level, entryList);
@@ -184,45 +284,33 @@ public class RevealEnchantment {
         return count;
     }
 
-    // TODO crack by generating enchantments to reduce info requirement
+    // dont crack by generating enchantments because it's relatively unreliable
     // TODO crack future
+    /**
+     * @return if the crack process has been reset due to irregular data
+     */
     private static boolean crackSeed(int shelves) {
         PowerInfo info = new PowerInfo(shelves, powers[0], powers[1], powers[2]);
         Optional<PowerInfo> opt = powerInfos.stream().filter(p -> p.is(shelves)).findFirst();
         boolean hasIrregularData = false;
         if (opt.isEmpty()) {
             powerInfos.add(info);
-        } else if (!opt.get().equals(shelves, powers)) {
+        } else if (!opt.get().equals(info)) {
             hasIrregularData = true;
             resetSeeds();
             powerInfos.add(info);
         }
         if (seedFound) return false;
-        int size = powerInfos.size();
-        if (size == 3) {
-            FastRandom random = new FastRandom();
+        Random random = new FastRandom();
+        IntStream stream;
+        if (powerInfos.size() == 1) {
             int seedR = seedRight & 0xFFFF;
-            reducedSeeds = IntStream.rangeClosed(0, 0xFFFF)
-                    .map(left -> left << 16 | seedR)
-                    .filter(seed -> {
-                        long rawSeed = FastRandom.getRawSeed(seed);
-                        for (PowerInfo p : powerInfos) {
-                            random.setRawSeed(rawSeed);
-                            if (!p.test(random)) return false;
-                        }
-                        return true;
-                    }).toArray();
-            checkReduced();
-        } else if (size > 3) {
-            Random random = new FastRandom();
-            reducedSeeds = Arrays.stream(reducedSeeds)
-                    .filter(seed -> {
-                        random.setSeed(seed);
-                        return info.test(random);
-                    })
-                    .toArray();
-            checkReduced();
+            stream = IntStream.rangeClosed(0, 0xFFFF).map(left -> left << 16 | seedR);
+        } else {
+            stream = Arrays.stream(reducedSeeds);
         }
+        reducedSeeds = stream.filter(seed -> info.test(random, seed)).toArray();
+        checkReduced();
         return hasIrregularData;
     }
 
@@ -230,14 +318,88 @@ public class RevealEnchantment {
         seedFound = false;
         reducedSeeds = new int[0];
         powerInfos.clear();
+        allPowerPredictions.clear();
     }
 
     private static void checkReduced() {
         if (reducedSeeds.length == 0) {
             resetSeeds();
         } else if (reducedSeeds.length == 1) {
-            seedFound = true;
             seed = reducedSeeds[0];
+            seedFound = true;
+        }
+    }
+
+    public static final class EnchantingContext implements Comparable<EnchantingContext> {
+        public final int slot;
+        public final int power;
+        private int shelves;
+
+        public EnchantingContext(int slot, int power, int shelves) {
+            this.slot = slot;
+            this.power = power;
+            this.shelves = shelves;
+        }
+
+        public Text toTranslated() {
+            return Text.translatable("meloutils.revealEnchantment.allPower.info", slot + 1, power, shelves).formatted(Formatting.GREEN);
+        }
+
+        public List<EnchantmentLevelEntry> generate(Stream<RegistryEntry<Enchantment>> entryList, ItemStack stack, Random random, int seed) {
+            return generateEnchantments(entryList, stack, slot, power, random, seed);
+        }
+
+        public boolean defWorseThan(EnchantingContext other) {
+            return other.slot <= slot && other.power <= power && other.shelves <= shelves && this != other;
+        }
+
+        @Override
+        public int compareTo(@NotNull EnchantingContext b) {
+            if (slot != b.slot) return slot < b.slot ? -1 : 1;
+            if (power != b.power) return power < b.power ? -1 : 1;
+            if (shelves != b.shelves) return shelves < b.shelves ? -1 : 1;
+            return 0;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (EnchantingContext) obj;
+            if (this.slot != that.slot || this.power != that.power) return false;
+            if (this.shelves != that.shelves) {
+                if (this.shelves < that.shelves) {
+                    that.shelves = this.shelves;
+                } else {
+                    this.shelves = that.shelves;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(slot, power);
+        }
+    }
+
+    public record ELEWrapper(EnchantmentLevelEntry base) {
+
+        public Text toTranslated() {
+            return Enchantment.getName(base.enchantment, base.level);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ELEWrapper that = (ELEWrapper) o;
+            return Objects.equals(base.enchantment.value(), that.base.enchantment.value()) && base.level == that.base.level;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(base.enchantment.value(), base.level);
         }
     }
 
@@ -252,6 +414,11 @@ public class RevealEnchantment {
             return n <= index ? 0 : n;
         }
 
+        public boolean test(Random random, int seed) {
+            random.setSeed(seed);
+            return test(random);
+        }
+
         public boolean test(Random random) {
             return getPower(random, 0, shelves) == power0
                     && getPower(random, 1, shelves) == power1
@@ -262,10 +429,6 @@ public class RevealEnchantment {
             return shelves == this.shelves;
         }
 
-        public boolean equals(int shelves, int[] powers) {
-            return is(shelves) && powers[0] == power0 && powers[1] == power1 && powers[2] == power2;
-        }
-
         @Override
         public boolean equals(Object other) {
             if (other == null || other.getClass() != PowerInfo.class) return false;
@@ -274,6 +437,7 @@ public class RevealEnchantment {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class FastRandom implements BaseRandom {
         private static final int BITS = 48;
         private static final long MASK = 0xFFFFFFFFFFFFL;
