@@ -22,6 +22,7 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.collection.Weighting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -43,11 +44,21 @@ import static io.github.amelonrind.meloutils.MeloUtils.mc;
 import static net.minecraft.enchantment.Enchantments.*;
 
 public class RevealEnchantment {
-    public static List<RegistryKey<Enchantment>> LIST1204 = List.of(
+    private static final List<RegistryKey<Enchantment>> LIST1204 = List.of(
             PROTECTION, FIRE_PROTECTION, FEATHER_FALLING, BLAST_PROTECTION, PROJECTILE_PROTECTION, RESPIRATION,
             AQUA_AFFINITY, THORNS, DEPTH_STRIDER, SHARPNESS, SMITE, BANE_OF_ARTHROPODS, KNOCKBACK, FIRE_ASPECT,
             LOOTING, SWEEPING_EDGE, EFFICIENCY, SILK_TOUCH, UNBREAKING, FORTUNE, POWER, PUNCH, FLAME, INFINITY,
             LUCK_OF_THE_SEA, LURE, LOYALTY, IMPALING, RIPTIDE, CHANNELING, MULTISHOT, QUICK_CHARGE, PIERCING
+    );
+    private static final List<Set<RegistryKey<Enchantment>>> EXCLUSIVE_SETS = List.of(
+            Set.of(PROTECTION, BLAST_PROTECTION, FIRE_PROTECTION, PROJECTILE_PROTECTION),
+//            Set.of(FROST_WALKER, DEPTH_STRIDER),
+//            Set.of(INFINITY, MENDING),
+            Set.of(MULTISHOT, PIERCING),
+            Set.of(SHARPNESS, SMITE, BANE_OF_ARTHROPODS, IMPALING, DENSITY, BREACH),
+            Set.of(FORTUNE, SILK_TOUCH),
+            Set.of(RIPTIDE, CHANNELING),
+            Set.of(RIPTIDE, LOYALTY)
     );
     private static WeakReference<EnchantmentScreenHandler> lastHandler = new WeakReference<>(null);
     private static ItemStack lastStack = ItemStack.EMPTY;
@@ -261,9 +272,38 @@ public class RevealEnchantment {
     }
 
     private static List<EnchantmentLevelEntry> generateEnchantments(Stream<RegistryEntry<Enchantment>> entryList, ItemStack stack, int slot, int level, Random random, int seed) {
-        random.setSeed(seed + slot);
+        List<EnchantmentLevelEntry> list = new ArrayList<>();
+        int ability = stack.getItem().getEnchantability();
+        if (ability <= 0) return list;
 
-        List<EnchantmentLevelEntry> list = EnchantmentHelper.generateEnchantments(random, stack, level, entryList);
+        random.setSeed(seed + slot);
+        level += 1 + random.nextInt(ability / 4 + 1) + random.nextInt(ability / 4 + 1);
+        float deviation = (random.nextFloat() + random.nextFloat() - 1.0F) * 0.15F;
+        level = Math.max(1, Math.round(level + level * deviation));
+        List<EnchantmentLevelEntry> pool = EnchantmentHelper.getPossibleEntries(level, stack, entryList);
+        if (pool.isEmpty()) return list;
+
+        Optional<EnchantmentLevelEntry> next;
+        while (true) {
+            next = Weighting.getRandom(random, pool);
+            next.ifPresent(list::add);
+            if (random.nextInt(50) > level) break;
+            if (next.isPresent()) {
+                EnchantmentLevelEntry last = next.get();
+                last.enchantment.getKey().ifPresent(key -> {
+                    Set<RegistryKey<Enchantment>> conflicts = EXCLUSIVE_SETS.stream()
+                            .filter(set -> set.contains(key))
+                            .flatMap(Set::stream)
+                            .collect(Collectors.toUnmodifiableSet());
+                    if (!conflicts.isEmpty()) {
+                        pool.removeIf(ent -> ent.enchantment.getKey().map(conflicts::contains).orElse(false));
+                    }
+                });
+                EnchantmentHelper.removeConflicts(pool, last); // just in case
+                if (pool.isEmpty()) break;
+            }
+            level /= 2;
+        }
         if (stack.isOf(Items.BOOK) && list.size() > 1) {
             list.remove(random.nextInt(list.size()));
         }
@@ -284,8 +324,8 @@ public class RevealEnchantment {
         return count;
     }
 
-    // dont crack by generating enchantments because it's relatively unreliable
-    // TODO crack future
+    // don't crack by generating enchantments because it's relatively unreliable
+    // TODO crack future. I think this is too difficult for me for now.
     /**
      * @return if the crack process has been reset due to irregular data
      */
@@ -440,7 +480,7 @@ public class RevealEnchantment {
     @SuppressWarnings("unused")
     public static class FastRandom implements BaseRandom {
         private static final int BITS = 48;
-        private static final long MASK = 0xFFFFFFFFFFFFL;
+        private static final long MASK = (1L << BITS) - 1;
         private static final long MUL = 0x5DEECE66DL;
         private long seed = 0;
         private final GaussianGenerator gaussianGenerator = new GaussianGenerator(this);
