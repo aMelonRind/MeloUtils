@@ -497,8 +497,8 @@ public class RevealEnchantment {
 
         @Override
         public int next(int bits) {
-             this.seed = this.seed * MUL + 11L & MASK;
-             return (int)(this.seed >> BITS - bits);
+             seed = seed * MUL + 11L & MASK;
+             return (int)(seed >> BITS - bits);
         }
 
         @Override
