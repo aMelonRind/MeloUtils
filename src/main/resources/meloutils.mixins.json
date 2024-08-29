@@ -7,9 +7,10 @@
   ],
   "client": [
     "MixinChatHud",
-    "MixinClientPlayerInteractionManager",
     "MixinClientPlayNetworkHandler",
+    "MixinClientPlayerInteractionManager",
     "MixinDecoderHandler",
+    "MixinEnchantment",
     "MixinEnchantmentScreen",
     "MixinEntity",
     "MixinKeyboard",
