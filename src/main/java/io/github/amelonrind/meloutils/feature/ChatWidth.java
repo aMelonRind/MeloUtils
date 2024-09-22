@@ -2,14 +2,17 @@ package io.github.amelonrind.meloutils.feature;
 
 import io.github.amelonrind.meloutils.config.Config;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.WeakHashMap;
 import java.util.function.Supplier;
 
 import static io.github.amelonrind.meloutils.MeloUtils.mc;
 
 public class ChatWidth {
+    private static final WeakHashMap<Text, Integer> widthCache = new WeakHashMap<>();
     private static int lastWidth = 40;
     private static boolean shouldUpdateFlexWidth = true;
     private static int flexWidth = 0;
@@ -29,7 +32,7 @@ public class ChatWidth {
 
         if (Config.get().chatWidthFlex) {
             if (shouldUpdateFlexWidth) {
-                flexWidth = messages.stream().mapToInt(l -> mc.textRenderer.getWidth(l.content())).max().orElse(30) + 10;
+                flexWidth = messages.stream().mapToInt(l -> widthCache.computeIfAbsent(l.content(), mc.textRenderer::getWidth)).max().orElse(30) + 10;
                 shouldUpdateFlexWidth = false;
             }
             width2 = Math.min(Math.max(width, flexWidth), width2);
