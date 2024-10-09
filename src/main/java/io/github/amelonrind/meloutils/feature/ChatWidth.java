@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import static io.github.amelonrind.meloutils.MeloUtils.mc;
 
 public class ChatWidth {
-    private static final WeakHashMap<Text, Integer> widthCache = new WeakHashMap<>();
+    private static final WeakHashMap<IdentityHashedText, Integer> widthCache = new WeakHashMap<>();
     private static int lastWidth = 40;
     private static boolean shouldUpdateFlexWidth = true;
     private static int flexWidth = 0;
@@ -32,7 +32,7 @@ public class ChatWidth {
 
         if (Config.get().chatWidthFlex) {
             if (shouldUpdateFlexWidth) {
-                flexWidth = messages.stream().mapToInt(l -> widthCache.computeIfAbsent(l.content(), mc.textRenderer::getWidth)).max().orElse(30) + 10;
+                flexWidth = messages.stream().mapToInt(l -> widthCache.computeIfAbsent(new IdentityHashedText(l.content()), IdentityHashedText::getWidth)).max().orElse(30) + 10;
                 shouldUpdateFlexWidth = false;
             }
             width2 = Math.min(Math.max(width, flexWidth), width2);
@@ -48,6 +48,26 @@ public class ChatWidth {
 
     public static void onChatMessagesChange() {
         shouldUpdateFlexWidth = true;
+    }
+
+    record IdentityHashedText(Text text) {
+
+        public int getWidth() {
+            return text == null ? 0 : mc.textRenderer.getWidth(text);
+        }
+
+        @Override
+        public int hashCode() {
+            return System.identityHashCode(text);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            return text == ((IdentityHashedText) o).text;
+        }
+
     }
 
 }
