@@ -52,6 +52,9 @@ public class Config {
     @SerialEntry(comment = "Reveal enchantment in the enchanting table.")
     public boolean revealEnchantment = true;
 
+    @SerialEntry(comment = "Keeps player name tag even when F1 is enabled.")
+    public boolean keepF1NameTag = false;
+
     public void fixValues() {
         if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;
     }

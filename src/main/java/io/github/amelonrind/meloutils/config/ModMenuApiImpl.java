@@ -104,6 +104,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                                             .step(1))
                                     .build())
                             .option(optionOf("revealEnchantment", () -> cfg.revealEnchantment, val -> cfg.revealEnchantment = val))
+                            .option(optionOf("keepF1NameTag", () -> cfg.keepF1NameTag, val -> cfg.keepF1NameTag = val))
                             .build())
                     .save(Config.HANDLER::save)
                     .build()
