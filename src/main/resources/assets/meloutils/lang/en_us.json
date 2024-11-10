@@ -24,6 +24,8 @@
   "meloutils.settings.keepF1NameTag.description": "Keeps player name tag even when F1 is enabled.",
   "meloutils.settings.noItemFrameHitbox": "No Item Frame Hitbox",
   "meloutils.settings.noItemFrameHitbox.description": "Don't render item frame hitbox in F3+B.",
+  "meloutils.settings.autoJump360": "Auto Jump 360",
+  "meloutils.settings.autoJump360.description": "Enables auto jump in all directions.",
 
   "meloutils.revealEnchantment.noShelf": "⚠ Cannot count shelves",
   "meloutils.revealEnchantment.irregularData": "⚠ Reset due to irregular data",

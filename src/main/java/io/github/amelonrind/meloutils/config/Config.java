@@ -58,6 +58,9 @@ public class Config {
     @SerialEntry(comment = "Don't render item frame hitbox in F3+B.")
     public boolean noItemFrameHitbox = true;
 
+    @SerialEntry(comment = "Enables auto jump in all directions.")
+    public boolean autoJump360 = true;
+
     public void fixValues() {
         if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;
     }

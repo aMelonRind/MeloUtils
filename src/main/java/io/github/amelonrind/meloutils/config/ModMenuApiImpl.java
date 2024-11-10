@@ -106,6 +106,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                             .option(optionOf("revealEnchantment", () -> cfg.revealEnchantment, val -> cfg.revealEnchantment = val))
                             .option(optionOf("keepF1NameTag", () -> cfg.keepF1NameTag, val -> cfg.keepF1NameTag = val))
                             .option(optionOf("noItemFrameHitbox", () -> cfg.noItemFrameHitbox, val -> cfg.noItemFrameHitbox = val))
+                            .option(optionOf("autoJump360", () -> cfg.autoJump360, val -> cfg.autoJump360 = val))
                             .build())
                     .save(Config.HANDLER::save)
                     .build()
