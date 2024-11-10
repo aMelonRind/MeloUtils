@@ -22,6 +22,8 @@
   "meloutils.settings.revealEnchantment.description": "Reveal enchantment in the enchanting table.",
   "meloutils.settings.keepF1NameTag": "Keep Name Tag When F1 is Enabled",
   "meloutils.settings.keepF1NameTag.description": "Keeps player name tag even when F1 is enabled.",
+  "meloutils.settings.noItemFrameHitbox": "No Item Frame Hitbox",
+  "meloutils.settings.noItemFrameHitbox.description": "Don't render item frame hitbox in F3+B.",
 
   "meloutils.revealEnchantment.noShelf": "⚠ Cannot count shelves",
   "meloutils.revealEnchantment.irregularData": "⚠ Reset due to irregular data",

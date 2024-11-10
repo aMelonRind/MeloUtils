@@ -53,7 +53,10 @@ public class Config {
     public boolean revealEnchantment = true;
 
     @SerialEntry(comment = "Keeps player name tag even when F1 is enabled.")
-    public boolean keepF1NameTag = false;
+    public boolean keepF1NameTag = true;
+
+    @SerialEntry(comment = "Don't render item frame hitbox in F3+B.")
+    public boolean noItemFrameHitbox = true;
 
     public void fixValues() {
         if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;
