@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ClientPlayerEntity.class)
-public class MixinClientPlayerEntity {
+public abstract class MixinClientPlayerEntity {
 
     @WrapOperation(method = "autoJump", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;getRotationVecClient()Lnet/minecraft/util/math/Vec3d;"))
     private Vec3d onAutoJumpAngleDetection(ClientPlayerEntity instance, Operation<Vec3d> original) {

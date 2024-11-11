@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import static io.github.amelonrind.meloutils.MeloUtils.mc;
 
 @Mixin(Keyboard.class)
-public class MixinKeyboard {
+public abstract class MixinKeyboard {
 
     @Inject(method = "processF3", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/ChatHud;clear(Z)V"))
     private void onPressF3D(int key, CallbackInfoReturnable<Boolean> cir) {

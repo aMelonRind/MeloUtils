@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Enchantment.class)
-public class MixinEnchantment {
+public abstract class MixinEnchantment {
 
     @Redirect(method="getName", at = @At(value = "INVOKE", target = "Lnet/minecraft/text/Text;translatable(Ljava/lang/String;)Lnet/minecraft/text/MutableText;"))
     private static MutableText levelString(String key, @Local(argsOnly = true) int level) {

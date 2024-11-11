@@ -10,12 +10,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ShulkerBoxBlockEntity.class)
-public class MixinShulkerBoxBlockEntity {
+public abstract class MixinShulkerBoxBlockEntity {
 
     @Shadow private AnimationStage animationStage;
 
     @Inject(method = "onSyncedBlockEvent", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, target = "Lnet/minecraft/block/entity/ShulkerBoxBlockEntity;viewerCount:I"))
-    public void onBlockSync(int type, int data, CallbackInfoReturnable<Boolean> cir) {
+    private void onBlockSync(int type, int data, CallbackInfoReturnable<Boolean> cir) {
         if (data > 1) {
             animationStage = AnimationStage.OPENING;
         }

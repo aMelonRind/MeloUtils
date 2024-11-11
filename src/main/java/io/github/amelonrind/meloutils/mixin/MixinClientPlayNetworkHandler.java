@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.stream.Collectors;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class MixinClientPlayNetworkHandler {
+public abstract class MixinClientPlayNetworkHandler {
 
     @Redirect(method = "onPlayerList", at = @At(value = "INVOKE", remap = false, target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"))
-    public void onPlayerList(Logger instance, String s, Object o, Object o1, @Local(argsOnly = true) PlayerListS2CPacket packet, @Local PlayerListS2CPacket.Entry entry) {
+    private void onPlayerList(Logger instance, String s, Object o, Object o1, @Local(argsOnly = true) PlayerListS2CPacket packet, @Local PlayerListS2CPacket.Entry entry) {
         String actions = packet.getActions().stream().map(action -> switch (action) {
             case UPDATE_GAME_MODE -> "UPDATE_GAME_MODE: " + entry.gameMode().name();
             case UPDATE_LISTED -> entry.listed() ? "UPDATE_LISTED" : "!UPDATE_LISTED";

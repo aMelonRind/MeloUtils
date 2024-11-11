@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.List;
 
 @Mixin(EnchantmentScreen.class)
-public class MixinEnchantmentScreen {
+public abstract class MixinEnchantmentScreen {
 
     @Inject(method = "render", at = @At(value = "INVOKE", ordinal = 0, shift = At.Shift.AFTER, target = "Ljava/util/List;add(Ljava/lang/Object;)Z"))
     private void onTooltip(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci, @Local List<Text> list, @Local(ordinal = 3) int index) {
