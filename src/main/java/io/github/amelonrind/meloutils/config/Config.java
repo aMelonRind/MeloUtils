@@ -61,6 +61,9 @@ public class Config {
     @SerialEntry(comment = "Enables auto jump in all directions.")
     public boolean autoJump360 = true;
 
+    @SerialEntry(comment = "Pauses some mod render like GlowItem when PrtScn is pressed.")
+    public boolean pauseRenderOnPrtScn = true;
+
     public void fixValues() {
         if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;
     }

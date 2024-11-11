@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class GlowItem {
 
     private static boolean shouldGlow(Entity entity) {
-        return entity.getType().equals(EntityType.ITEM) && Config.get().glowItem;
+        return entity.getType().equals(EntityType.ITEM) && Config.get().glowItem && PauseRenderOnPrtScn.check();
     }
 
     public static void onIsGlowing(Entity entity, CallbackInfoReturnable<Boolean> cir) {

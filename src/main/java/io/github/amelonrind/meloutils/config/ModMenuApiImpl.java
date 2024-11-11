@@ -107,6 +107,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                             .option(optionOf("keepF1NameTag", () -> cfg.keepF1NameTag, val -> cfg.keepF1NameTag = val))
                             .option(optionOf("noItemFrameHitbox", () -> cfg.noItemFrameHitbox, val -> cfg.noItemFrameHitbox = val))
                             .option(optionOf("autoJump360", () -> cfg.autoJump360, val -> cfg.autoJump360 = val))
+                            .option(optionOf("pauseRenderOnPrtScn", () -> cfg.pauseRenderOnPrtScn, val -> cfg.pauseRenderOnPrtScn = val))
                             .build())
                     .save(Config.HANDLER::save)
                     .build()
