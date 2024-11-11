@@ -1,26 +1,21 @@
 package io.github.amelonrind.meloutils.feature;
 
 import io.github.amelonrind.meloutils.config.Config;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.function.Supplier;
 
 public class GlowItem {
 
-    private static boolean shouldGlow(Entity entity) {
-        return entity.getType().equals(EntityType.ITEM) && Config.get().glowItem && PauseRenderOnPrtScn.check();
+    private static boolean shouldGlow() {
+        return Config.get().glowItem && PauseRenderOnPrtScn.check();
     }
 
-    public static void onIsGlowing(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (shouldGlow(entity)) {
-            cir.setReturnValue(true);
-        }
+    public static boolean onIsGlowing(Supplier<Boolean> def) {
+        return shouldGlow() || def.get();
     }
 
-    public static void onGetTeamColorValue(Entity entity, CallbackInfoReturnable<Integer> cir) {
-        if (shouldGlow(entity)) {
-            cir.setReturnValue(Config.get().glowItemColor.getRGB());
-        }
+    public static int onGetTeamColorValue(int def) {
+        return shouldGlow() && def == 0xFFFFFF ? Config.get().glowItemColor.getRGB() : def;
     }
 
 }
