@@ -28,6 +28,10 @@
   "meloutils.settings.autoJump360.description": "Enables auto jump in all directions.",
   "meloutils.settings.pauseRenderOnPrtScn": "Pause Render on PrtScn",
   "meloutils.settings.pauseRenderOnPrtScn.description": "Pauses some mod render like GlowItem when PrtScn is pressed.",
+  "meloutils.settings.disableOffhandInteraction": "Disable Offhand Interaction",
+  "meloutils.settings.disableOffhandInteraction.description": "Disables some item's offhand interaction defined in the list.",
+  "meloutils.settings.disableOffhandInteractionItems": "Disable Offhand Interaction Items",
+  "meloutils.settings.disableOffhandInteractionItems.description": "The list of items for Disable Offhand Interaction.",
 
   "meloutils.revealEnchantment.noShelf": "⚠ Cannot count shelves",
   "meloutils.revealEnchantment.irregularData": "⚠ Reset due to irregular data",

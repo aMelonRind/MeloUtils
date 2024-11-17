@@ -5,9 +5,12 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import io.github.amelonrind.meloutils.MeloUtils;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.Set;
 
 public class Config {
     public static final ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
@@ -63,6 +66,14 @@ public class Config {
 
     @SerialEntry(comment = "Pauses some mod render like GlowItem when PrtScn is pressed.")
     public boolean pauseRenderOnPrtScn = true;
+
+    @SerialEntry(comment = "Disables some item's offhand interaction defined in the list.")
+    public boolean disableOffhandInteraction = true;
+
+    @SerialEntry(comment = "The list of items for disableOffhandInteraction.")
+    public Set<Item> disableOffhandInteractionItems = Set.of(
+            Items.SHIELD
+    );
 
     public void fixValues() {
         if (chatWidthMultiplier < 1.0f) chatWidthMultiplier = 1.0f;

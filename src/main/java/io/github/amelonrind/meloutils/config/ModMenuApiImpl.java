@@ -3,18 +3,19 @@ package io.github.amelonrind.meloutils.config;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
-import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
+import dev.isxander.yacl3.api.controller.*;
 import io.github.amelonrind.meloutils.MeloUtils;
 import io.github.amelonrind.meloutils.feature.KeepChat;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -43,7 +44,7 @@ public class ModMenuApiImpl implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        Config def = new Config();
+        Config def = Config.HANDLER.defaults();
         return p -> {
             Config cfg = Config.get();
             return YetAnotherConfigLib.createBuilder()
@@ -108,6 +109,18 @@ public class ModMenuApiImpl implements ModMenuApi {
                             .option(optionOf("noItemFrameHitbox", () -> cfg.noItemFrameHitbox, val -> cfg.noItemFrameHitbox = val))
                             .option(optionOf("autoJump360", () -> cfg.autoJump360, val -> cfg.autoJump360 = val))
                             .option(optionOf("pauseRenderOnPrtScn", () -> cfg.pauseRenderOnPrtScn, val -> cfg.pauseRenderOnPrtScn = val))
+                            .option(optionOf("disableOffhandInteraction", () -> cfg.disableOffhandInteraction, val -> cfg.disableOffhandInteraction = val))
+                            .group(ListOption.<Item>createBuilder()
+                                    .name(translatable("disableOffhandInteractionItems"))
+                                    .description(descriptionOf("disableOffhandInteractionItems"))
+                                    .binding(List.copyOf(Config.HANDLER.defaults().disableOffhandInteractionItems),
+                                            () -> List.copyOf(cfg.disableOffhandInteractionItems),
+                                            val -> cfg.disableOffhandInteractionItems = Set.copyOf(val)
+                                    )
+                                    .collapsed(true)
+                                    .initial(Items.APPLE)
+                                    .controller(ItemControllerBuilder::create)
+                                    .build())
                             .build())
                     .save(Config.HANDLER::save)
                     .build()
