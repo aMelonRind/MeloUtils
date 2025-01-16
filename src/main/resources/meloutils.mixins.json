@@ -15,6 +15,7 @@
     "MixinEnchantmentScreen",
     "MixinEntityRenderDispatcher",
     "MixinItemEntity",
+    "MixinItemStack",
     "MixinKeyboard",
     "MixinLivingEntity",
     "MixinMinecraftClient",
