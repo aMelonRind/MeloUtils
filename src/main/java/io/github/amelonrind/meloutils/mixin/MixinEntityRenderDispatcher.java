@@ -12,10 +12,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(EntityRenderDispatcher.class)
 public abstract class MixinEntityRenderDispatcher {
 
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;hasReducedDebugInfo()Z"))
+    @Redirect(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/EntityRenderer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;hasReducedDebugInfo()Z"))
     private boolean onHitboxCheck(MinecraftClient instance, @Local(argsOnly = true) Entity entity) {
-//        if (NoItemFrameHitbox.shouldNotRenderHitbox(entity)) return true;
-//        return false;
         return NoItemFrameHitbox.shouldNotRenderHitbox(entity);
     }
 

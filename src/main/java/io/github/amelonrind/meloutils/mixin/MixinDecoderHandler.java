@@ -15,7 +15,7 @@ import java.util.List;
 @Mixin(DecoderHandler.class)
 public abstract class MixinDecoderHandler {
 
-    @Inject(method = "decode", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/Packet;getPacketId()Lnet/minecraft/network/packet/PacketType;"), cancellable = true)
+    @Inject(method = "decode", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/Packet;getPacketType()Lnet/minecraft/network/packet/PacketType;"), cancellable = true)
     private void onDecodeFail(ChannelHandlerContext context, ByteBuf buf, List<Object> objects, CallbackInfo ci, @Local Packet<?> packet) {
         if (packet == null) ci.cancel();
     }

@@ -6,6 +6,8 @@ import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.EnchantableComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.EnchantmentLevelEntry;
@@ -48,7 +50,8 @@ public class RevealEnchantment {
             PROTECTION, FIRE_PROTECTION, FEATHER_FALLING, BLAST_PROTECTION, PROJECTILE_PROTECTION, RESPIRATION,
             AQUA_AFFINITY, THORNS, DEPTH_STRIDER, SHARPNESS, SMITE, BANE_OF_ARTHROPODS, KNOCKBACK, FIRE_ASPECT,
             LOOTING, SWEEPING_EDGE, EFFICIENCY, SILK_TOUCH, UNBREAKING, FORTUNE, POWER, PUNCH, FLAME, INFINITY,
-            LUCK_OF_THE_SEA, LURE, LOYALTY, IMPALING, RIPTIDE, CHANNELING, MULTISHOT, QUICK_CHARGE, PIERCING
+            LUCK_OF_THE_SEA, LURE, LOYALTY, IMPALING, RIPTIDE, CHANNELING, MULTISHOT, QUICK_CHARGE, PIERCING,
+            DENSITY, BREACH
     );
     private static final List<Set<RegistryKey<Enchantment>>> EXCLUSIVE_SETS = List.of(
             Set.of(PROTECTION, BLAST_PROTECTION, FIRE_PROTECTION, PROJECTILE_PROTECTION),
@@ -75,7 +78,8 @@ public class RevealEnchantment {
     public static StringVisitable getPhrase(EnchantmentScreenHandler handler, int index) {
         assert mc.world != null;
         return mc.world.getRegistryManager()
-                .get(RegistryKeys.ENCHANTMENT).getEntry(handler.enchantmentId[index])
+                .getOptional(RegistryKeys.ENCHANTMENT)
+                .flatMap(v -> v.getEntry(handler.enchantmentId[index]))
                 .map(ref -> Enchantment.getName(ref, handler.enchantmentLevel[index]))
                 .orElseGet(Text::empty);
     }
@@ -114,7 +118,7 @@ public class RevealEnchantment {
         if (unchanged) return;
 
         for (List<Text> list : texts) list.clear();
-        if (stack.isEmpty() || !stack.isEnchantable() || stack.getItem().getEnchantability() <= 0) return;
+        if (stack.isEmpty() || !stack.isEnchantable()) return;
 
         ClientWorld world = mc.world;
         if (world == null) return;
@@ -255,16 +259,17 @@ public class RevealEnchantment {
     }
 
     private static Supplier<Stream<RegistryEntry<Enchantment>>> getEnchantmentList(ClientWorld world) {
-        Registry<Enchantment> registry = world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
-        Optional<RegistryEntryList.Named<Enchantment>> opt = registry.getEntryList(EnchantmentTags.IN_ENCHANTING_TABLE);
+        Registry<Enchantment> registry = world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
+        Optional<RegistryEntryList.Named<Enchantment>> opt = registry.getOptional(EnchantmentTags.IN_ENCHANTING_TABLE);
         if (opt.isPresent()) {
             RegistryEntryList.Named<Enchantment> named = opt.get();
             if (named.stream().findFirst().isPresent()) {
                 return named::stream;
             }
         }
+//        registryManager.getOrThrow(RegistryKeys.ENCHANTMENT).getOptional(EnchantmentTags.IN_ENCHANTING_TABLE);
         List<RegistryEntry<Enchantment>> list = LIST1204.stream()
-                .map(registry::getEntry)
+                .map(registry::getOptional)
                 .filter(Optional::isPresent)
                 .map(optional -> (RegistryEntry<Enchantment>) optional.get())
                 .toList();
@@ -273,11 +278,11 @@ public class RevealEnchantment {
 
     private static List<EnchantmentLevelEntry> generateEnchantments(Stream<RegistryEntry<Enchantment>> entryList, ItemStack stack, int slot, int level, Random random, int seed) {
         List<EnchantmentLevelEntry> list = new ArrayList<>();
-        int ability = stack.getItem().getEnchantability();
-        if (ability <= 0) return list;
+        EnchantableComponent ability = stack.get(DataComponentTypes.ENCHANTABLE);
+        if (ability == null) return list;
 
         random.setSeed(seed + slot);
-        level += 1 + random.nextInt(ability / 4 + 1) + random.nextInt(ability / 4 + 1);
+        level += 1 + random.nextInt(ability.value() / 4 + 1) + random.nextInt(ability.value() / 4 + 1);
         float deviation = (random.nextFloat() + random.nextFloat() - 1.0F) * 0.15F;
         level = Math.max(1, Math.round(level + level * deviation));
         List<EnchantmentLevelEntry> pool = EnchantmentHelper.getPossibleEntries(level, stack, entryList);
