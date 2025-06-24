@@ -72,6 +72,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                                             .formatValue(v -> Text.literal(String.format("x%.2f", v))))
                                     .build())
                             .option(optionOf("chatWidthFlex", () -> cfg.chatWidthFlex, val -> cfg.chatWidthFlex = val))
+                            .option(optionOf("initialBlockActionCooldown", () -> cfg.initialBlockActionCooldown, val -> cfg.initialBlockActionCooldown = val))
                             .option(Option.<Integer>createBuilder()
                                     .name(translatable("breakCooldown"))
                                     .description(descriptionOf("breakCooldown"))

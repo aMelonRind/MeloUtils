@@ -24,6 +24,11 @@ public abstract class MixinMinecraftClient {
 
     @Shadow private int itemUseCooldown;
 
+    @Inject(method = "doAttack", at = @At("HEAD"))
+    private void onAttack(CallbackInfoReturnable<Boolean> cir) {
+        Cooldowns.resetBreak();
+    }
+
     @Inject(method = "doItemUse", at = @At("RETURN"))
     private void onInteract(CallbackInfo ci) {
         itemUseCooldown = Cooldowns.checkInteractCooldown(itemUseCooldown);

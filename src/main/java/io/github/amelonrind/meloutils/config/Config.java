@@ -37,8 +37,11 @@ public class Config {
     @SerialEntry(comment = "The width multiplier on focused chat.")
     public float chatWidthMultiplier = 2.0f;
 
-    @SerialEntry(comment = "If true, expand chat width only when needed.")
+    @SerialEntry(comment = "Expand chat width only when needed.")
     public boolean chatWidthFlex = true;
+
+    @SerialEntry(comment = "Keep the first few cooldown for block actions.")
+    public boolean initialBlockActionCooldown = true;
 
     @SerialEntry(comment = "Break cooldown override.")
     public int breakCooldown = 5;
