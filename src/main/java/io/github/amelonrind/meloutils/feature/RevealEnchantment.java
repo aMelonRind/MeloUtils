@@ -45,6 +45,7 @@ import java.util.stream.Stream;
 import static io.github.amelonrind.meloutils.MeloUtils.mc;
 import static net.minecraft.enchantment.Enchantments.*;
 
+// this is broken since the "update to 1.21.4" commit.
 public class RevealEnchantment {
     private static final List<RegistryKey<Enchantment>> LIST1204 = List.of(
             PROTECTION, FIRE_PROTECTION, FEATHER_FALLING, BLAST_PROTECTION, PROJECTILE_PROTECTION, RESPIRATION,
