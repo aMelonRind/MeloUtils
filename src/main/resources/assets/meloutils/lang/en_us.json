@@ -10,6 +10,8 @@
   "meloutils.settings.chatWidthMultiplier.description": "The multiplier of focused chat width.",
   "meloutils.settings.chatWidthFlex": "Focused Chat Width Flex",
   "meloutils.settings.chatWidthFlex.description": "Expand chat width only when needed.",
+  "meloutils.settings.preventBreakingReset": "Prevent Breaking Reset",
+  "meloutils.settings.preventBreakingReset.description": "Prevent any form of item damage from resetting block breaking progress.",
   "meloutils.settings.initialBlockActionCooldown": "Initial Block Action Cooldown",
   "meloutils.settings.initialBlockActionCooldown.description": "Keep the first few cooldown for block actions.",
   "meloutils.settings.breakCooldown": "Break Cooldown",

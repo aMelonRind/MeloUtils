@@ -40,6 +40,9 @@ public class Config {
     @SerialEntry(comment = "Expand chat width only when needed.")
     public boolean chatWidthFlex = true;
 
+    @SerialEntry(comment = "Prevent any form of item damage from resetting block breaking progress.")
+    public boolean preventBreakingReset = true;
+
     @SerialEntry(comment = "Keep the first few cooldown for block actions.")
     public boolean initialBlockActionCooldown = true;
 
