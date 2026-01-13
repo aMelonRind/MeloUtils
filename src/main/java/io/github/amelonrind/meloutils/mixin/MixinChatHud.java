@@ -24,7 +24,7 @@ public abstract class MixinChatHud {
 
     @Shadow protected abstract void refresh();
 
-    @Shadow public abstract int getWidth();
+    @Shadow protected abstract int getWidth();
 
     @Inject(method = "clear", at = @At("HEAD"), cancellable = true)
     private void keepMessages(boolean clearHistory, CallbackInfo ci) {

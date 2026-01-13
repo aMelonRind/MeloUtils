@@ -2,6 +2,7 @@ package io.github.amelonrind.meloutils.feature;
 
 import io.github.amelonrind.meloutils.config.Config;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.util.ChatMessages;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -53,7 +54,9 @@ public class ChatWidth {
     record IdentityHashedText(Text text) {
 
         public int getWidth() {
-            return text == null ? 0 : mc.textRenderer.getWidth(text);
+            if (text == null) return 0;
+            return ChatMessages.breakRenderedChatMessageLines(text, Integer.MAX_VALUE, mc.textRenderer)
+                    .stream().mapToInt(mc.textRenderer::getWidth).max().orElse(0);
         }
 
         @Override

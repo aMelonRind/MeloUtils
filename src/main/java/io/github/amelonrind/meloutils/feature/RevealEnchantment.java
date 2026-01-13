@@ -4,7 +4,8 @@ import io.github.amelonrind.meloutils.config.Config;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.EnchantingTableBlock;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.Window;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.EnchantableComponent;
@@ -171,7 +172,7 @@ public class RevealEnchantment {
             t.add(ScreenTexts.EMPTY);
             t.add(seedHeader);
             for (EnchantmentLevelEntry entry : list) {
-                Text name = Enchantment.getName(entry.enchantment, entry.level);
+                Text name = Enchantment.getName(entry.enchantment(), entry.level());
                 t.add(entry == e ? Text.empty().append(name).append(asterisk) : name);
             }
         }
@@ -179,7 +180,10 @@ public class RevealEnchantment {
 
     private static void renderAllPowerPredictions(EnchantmentScreenHandler handler, ItemStack stack, DrawContext context) {
         assert mc.world != null;
-        if (!Screen.hasAltDown()) return;
+        Window window = mc.getWindow();
+        boolean altDown = InputUtil.isKeyPressed(window, InputUtil.GLFW_KEY_LEFT_ALT)
+                || InputUtil.isKeyPressed(window, InputUtil.GLFW_KEY_RIGHT_ALT);
+        if (!altDown) return;
         if (!seedFound) return;
         // since the seed wouldn't be found if the item is invalid, we skip the checks here
 
@@ -221,7 +225,7 @@ public class RevealEnchantment {
             Text indent = Text.literal("  ");
             for (Map.Entry<Set<ELEWrapper>, Set<EnchantingContext>> ent : map.entrySet().stream().sorted(Comparator
                         .<Map.Entry<Set<ELEWrapper>, Set<EnchantingContext>>>comparingInt(e -> e.getKey().size())
-                        .thenComparingInt(e -> e.getKey().stream().mapToInt(w -> w.base().level).sum()).reversed()
+                        .thenComparingInt(e -> e.getKey().stream().mapToInt(w -> w.base().level()).sum()).reversed()
                     ).toList()
             ) {
                 Set<EnchantingContext> filtered = ent.getValue();
@@ -291,18 +295,18 @@ public class RevealEnchantment {
 
         Optional<EnchantmentLevelEntry> next;
         while (true) {
-            next = Weighting.getRandom(random, pool);
+            next = Weighting.getRandom(random, pool, EnchantmentLevelEntry::getWeight);
             next.ifPresent(list::add);
             if (random.nextInt(50) > level) break;
             if (next.isPresent()) {
                 EnchantmentLevelEntry last = next.get();
-                last.enchantment.getKey().ifPresent(key -> {
+                last.enchantment().getKey().ifPresent(key -> {
                     Set<RegistryKey<Enchantment>> conflicts = EXCLUSIVE_SETS.stream()
                             .filter(set -> set.contains(key))
                             .flatMap(Set::stream)
                             .collect(Collectors.toUnmodifiableSet());
                     if (!conflicts.isEmpty()) {
-                        pool.removeIf(ent -> ent.enchantment.getKey().map(conflicts::contains).orElse(false));
+                        pool.removeIf(ent -> ent.enchantment().getKey().map(conflicts::contains).orElse(false));
                     }
                 });
                 EnchantmentHelper.removeConflicts(pool, last); // just in case
@@ -432,7 +436,7 @@ public class RevealEnchantment {
     public record ELEWrapper(EnchantmentLevelEntry base) {
 
         public Text toTranslated() {
-            return Enchantment.getName(base.enchantment, base.level);
+            return Enchantment.getName(base.enchantment(), base.level());
         }
 
         @Override
@@ -440,12 +444,12 @@ public class RevealEnchantment {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             ELEWrapper that = (ELEWrapper) o;
-            return Objects.equals(base.enchantment.value(), that.base.enchantment.value()) && base.level == that.base.level;
+            return Objects.equals(base.enchantment().value(), that.base.enchantment().value()) && base.level() == that.base.level();
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(base.enchantment.value(), base.level);
+            return Objects.hash(base.enchantment().value(), base.level());
         }
     }
 
