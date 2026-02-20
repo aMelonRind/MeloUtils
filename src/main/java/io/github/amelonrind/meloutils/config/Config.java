@@ -31,6 +31,9 @@ public class Config {
     @SerialEntry(comment = "Glow dropped items.")
     public boolean glowItem = true;
 
+    @SerialEntry(comment = "Shrink large tooltips.")
+    public boolean shrinkTooltip = true;
+
     @SerialEntry(comment = "The color of glowing item.")
     public Color glowItemColor = new Color(0xFF8C00);
 

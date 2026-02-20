@@ -56,6 +56,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                                 cfg.keepChat = val;
                             }))
                             .option(optionOf("glowItem", () -> cfg.glowItem, val -> cfg.glowItem = val))
+                            .option(optionOf("shrinkTooltip", () -> cfg.shrinkTooltip, val -> cfg.shrinkTooltip = val))
                             .option(Option.<Color>createBuilder()
                                     .name(translatable("glowItemColor"))
                                     .description(descriptionOf("glowItemColor"))

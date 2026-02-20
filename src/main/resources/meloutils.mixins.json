@@ -11,6 +11,7 @@
     "MixinClientPlayerInteractionManager",
     "MixinClientPlayNetworkHandler",
     "MixinDecoderHandler",
+    "MixinDrawContext",
     "MixinEnchantment",
     "MixinEnchantmentScreen",
     "MixinEntityRenderDispatcher",

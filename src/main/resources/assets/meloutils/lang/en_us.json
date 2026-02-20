@@ -4,6 +4,8 @@
   "meloutils.settings.keepChat.description": "Keeps chat even if switched server or disconnected. You can still clear chat with F3+D.",
   "meloutils.settings.glowItem": "Glow Item",
   "meloutils.settings.glowItem.description": "Glow dropped items.",
+  "meloutils.settings.shrinkTooltip": "Scale Tooltip",
+  "meloutils.settings.shrinkTooltip.description": "Shrink large tooltips.",
   "meloutils.settings.glowItemColor": "Glow Item Color",
   "meloutils.settings.glowItemColor.description": "The color of glowing item.",
   "meloutils.settings.chatWidthMultiplier": "Focused Chat Width Multiplier",
