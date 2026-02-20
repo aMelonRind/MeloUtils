@@ -64,6 +64,9 @@ public class Config {
     @SerialEntry(comment = "Reveal enchantment in the enchanting table.")
     public boolean revealEnchantment = true;
 
+    @SerialEntry(comment = "Fix horizontal scroll on mac.")
+    public boolean fixHorizontalScroll = true;
+
     @SerialEntry(comment = "Keeps player name tag even when F1 is enabled.")
     public boolean keepF1NameTag = true;
 

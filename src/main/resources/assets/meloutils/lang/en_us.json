@@ -26,6 +26,8 @@
   "meloutils.settings.jumpCooldown.description": "Jump cooldown override.",
   "meloutils.settings.revealEnchantment": "Reveal Enchantment",
   "meloutils.settings.revealEnchantment.description": "Reveal enchantment in the enchanting table.",
+  "meloutils.settings.fixHorizontalScroll": "Reveal Enchantment",
+  "meloutils.settings.fixHorizontalScroll.description": "Reveal enchantment in the enchanting table.",
   "meloutils.settings.keepF1NameTag": "Keep Name Tag When F1 is Enabled",
   "meloutils.settings.keepF1NameTag.description": "Keeps player name tag even when F1 is enabled.",
   "meloutils.settings.noItemFrameHitbox": "No Item Frame Hitbox",

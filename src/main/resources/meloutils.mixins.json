@@ -21,6 +21,7 @@
     "MixinKeyboard",
     "MixinLivingEntity",
     "MixinMinecraftClient",
+    "MixinMouse",
     "MixinPacketCodecDispatcher",
     "MixinShulkerBoxBlockEntity"
   ],

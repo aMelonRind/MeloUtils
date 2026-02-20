@@ -108,6 +108,7 @@ public class ModMenuApiImpl implements ModMenuApi {
                                             .step(1))
                                     .build())
                             .option(optionOf("revealEnchantment", () -> cfg.revealEnchantment, val -> cfg.revealEnchantment = val))
+                            .option(optionOf("fixHorizontalScroll", () -> cfg.fixHorizontalScroll, val -> cfg.fixHorizontalScroll = val))
                             .option(optionOf("keepF1NameTag", () -> cfg.keepF1NameTag, val -> cfg.keepF1NameTag = val))
                             .option(optionOf("noItemFrameHitbox", () -> cfg.noItemFrameHitbox, val -> cfg.noItemFrameHitbox = val))
                             .option(optionOf("autoJump360", () -> cfg.autoJump360, val -> cfg.autoJump360 = val))
