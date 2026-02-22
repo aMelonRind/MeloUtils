@@ -14,11 +14,11 @@ public class ShrinkTooltip {
     private static final WeakHashMap<List<TooltipComponent>, TransformInfo> scales = new WeakHashMap<>();
 
     public static Vector2ic checkOob(int sw, int sh, int w, int h, List<TooltipComponent> ref, BiFunction<Integer, Integer, Vector2ic> positioner) {
-        if (!Config.get().shrinkTooltip || w <= sw && h < sh) {
+        if (!Config.get().shrinkTooltip || w + 8 <= sw && h + 8 < sh) {
             return positioner.apply(w, h);
         } else {
             int guiScale = MinecraftClient.getInstance().getWindow().getScaleFactor();
-            int targetScale = Math.min(sw * guiScale / w, sh * guiScale / h);
+            int targetScale = Math.min(sw * guiScale / (w + 8), sh * guiScale / (h + 8));
             if (targetScale >= guiScale) {
                 return positioner.apply(w, h);
             } else {
