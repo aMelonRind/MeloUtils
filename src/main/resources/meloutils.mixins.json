@@ -23,7 +23,8 @@
     "MixinMinecraftClient",
     "MixinMouse",
     "MixinPacketCodecDispatcher",
-    "MixinShulkerBoxBlockEntity"
+    "MixinShulkerBoxBlockEntity",
+    "MixinYggdrasilServicesKeyInfo"
   ],
   "injectors": {
     "defaultRequire": 1
