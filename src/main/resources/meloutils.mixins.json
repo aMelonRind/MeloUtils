@@ -7,9 +7,9 @@
   ],
   "client": [
     "MixinChatHud",
+    "MixinClientPlayNetworkHandler",
     "MixinClientPlayerEntity",
     "MixinClientPlayerInteractionManager",
-    "MixinClientPlayNetworkHandler",
     "MixinDecoderHandler",
     "MixinDrawContext",
     "MixinEnchantment",
@@ -23,6 +23,8 @@
     "MixinMinecraftClient",
     "MixinMouse",
     "MixinPacketCodecDispatcher",
+    "MixinPlayerSkinProvider",
+    "MixinScoreboard",
     "MixinShulkerBoxBlockEntity",
     "MixinYggdrasilServicesKeyInfo"
   ],

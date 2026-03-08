@@ -1,8 +1,12 @@
 package io.github.amelonrind.meloutils.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import io.github.amelonrind.meloutils.feature.SuppressLogs;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
+import net.minecraft.network.packet.s2c.play.TeamS2CPacket;
 import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,6 +31,19 @@ public abstract class MixinClientPlayNetworkHandler {
             default -> action.name();
         }).collect(Collectors.joining(", "));
         instance.warn("Unknown player info {} ({})", entry.profileId(), actions);
+    }
+
+    @WrapOperation(method = "onTeam", at = @At(value = "INVOKE", target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;[Ljava/lang/Object;)V"))
+    private void suppressRemoveTeam(Logger instance, String s, Object[] objects, Operation<Void> original) {
+        if ("Received packet for unknown team {}: team action: {}, player action: {}".equals(s)
+            && objects.length == 3
+            && objects[1] == TeamS2CPacket.Operation.REMOVE
+            && objects[2] == null
+        ) {
+            SuppressLogs.log(() -> original.call(instance, s, objects));
+        } else {
+            original.call(instance, s, objects);
+        }
     }
 
 }
