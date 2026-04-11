@@ -15,6 +15,7 @@
     "MixinEnchantment",
     "MixinEnchantmentScreen",
     "MixinEntityRenderDispatcher",
+    "MixinEntityRenderManager",
     "MixinItemEntity",
     "MixinItemStack",
     "MixinKeyBinding",
@@ -26,6 +27,7 @@
     "MixinPlayerSkinProvider",
     "MixinScoreboard",
     "MixinShulkerBoxBlockEntity",
+    "MixinWorldRenderer",
     "MixinYggdrasilServicesKeyInfo"
   ],
   "injectors": {
